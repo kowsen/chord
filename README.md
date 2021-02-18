@@ -1,5 +1,5 @@
 # chord
-A crusty library I wrote to tile windows on my laptop
+A crusty library I wrote to tile windows on my laptop that I only just realized I should have named arpeggio.
 
 I got annoyed trying to learn i3 but still wanted to be able to tile my windows using keystrokes, so I wrote this instead. Basically everything is hard coded, but I'm throwing it up here in case it's interesting or useful to anyone.
 
