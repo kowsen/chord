@@ -85,9 +85,17 @@ async function positionWindow(window, x, y, width, height) {
 
 	const eStr = `-e 0,${x},${y},${width},${height}`;
 
-	await bash(`wmctrl -i -r ${window} -b remove,maximized_vert,maximized_horz`);
+	await setOpacity(window, 100);
+	await bash(`wmctrl -i -r ${window} -b remove,above`);
+	if (width !== MAX || height !== MAX) {
+		await bash(`wmctrl -i -r ${window} -b remove,maximized_vert,maximized_horz`);
+	}
 	await bash(`wmctrl -i -r ${window} ${eStr}`);
 	await bash(`wmctrl -i -r ${window} ${bStr}`);
+}
+
+async function setOpacity(window, opacity) {
+	await bash(`xprop -id ${window} -f _NET_WM_WINDOW_OPACITY 32c -set _NET_WM_WINDOW_OPACITY "$(printf 0x%x $((0xffffffff * ${opacity} / 100)))"`);
 }
 
 async function placeWindow1(window, index, count) {
@@ -99,7 +107,7 @@ async function placeWindow1(window, index, count) {
 	const FULL_HEIGHT = 1024;
 
 	if (count === 1) {
-		await positionWindow(window.handle, 0, 0, FULL_WIDTH, FULL_HEIGHT + window.heightOffset);
+		await positionWindow(window.handle, 0, 0, -1, -1);
 	} else if (count === 2) {
 		if (index === 0) {
 			await positionWindow(window.handle, 0, 0, COLUMN_WIDTH, FULL_HEIGHT + window.heightOffset);
@@ -141,12 +149,12 @@ async function placeWindow2(window, index, count) {
 	const DISPLAY2_RIGHT_OFFSET = DISPLAY2_BASE_X + 965;
 
 	if (count === 1) {
-		await positionWindow(window.handle, 0, 0, DISPLAY1_WIDTH, DISPLAY1_HEIGHT + window.heightOffset);
+		await positionWindow(window.handle, 0, 0, -1, -1);
 	} else if (count === 2) {
 		if (index === 0) {
-			await positionWindow(window.handle, 0, 0, DISPLAY1_WIDTH, DISPLAY1_HEIGHT + window.heightOffset);
+			await positionWindow(window.handle, 0, 0, -1, -1);
 		} else if (index === 1) {
-			await positionWindow(window.handle, DISPLAY2_BASE_X, DISPLAY2_BASE_Y, DISPLAY2_WIDTH, DISPLAY2_HEIGHT + window.heightOffset);
+			await positionWindow(window.handle, DISPLAY2_BASE_X, DISPLAY2_BASE_Y, -1, -1);
 		}
 	} else if (count === 3) {
 		if (index === 0) {
@@ -154,7 +162,7 @@ async function placeWindow2(window, index, count) {
 		} else if (index === 1) {
 			await positionWindow(window.handle, DISPLAY1_RIGHT_OFFSET, 0, DISPLAY1_COLUMN_WIDTH, DISPLAY1_HEIGHT + window.heightOffset);
 		} else if (index === 2) {
-			await positionWindow(window.handle, DISPLAY2_BASE_X, DISPLAY2_BASE_Y, DISPLAY2_WIDTH, DISPLAY2_HEIGHT + window.heightOffset);
+			await positionWindow(window.handle, DISPLAY2_BASE_X, DISPLAY2_BASE_Y, -1, -1);
 		}
 	} else if (count === 4) {
 		if (index === 0) {
